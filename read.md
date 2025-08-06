@@ -1,0 +1,90 @@
+- Routes Models-Controller-Routes
+    - auth
+        - authRoutes
+            - controllers/authController
+                - models/authModel
+    - admin
+        - areaRoutes
+            - controllers/admin/areaController
+                - models/admin/areaModel #in 1
+        - assetRoutes
+            - controllers/assetController
+                - models/assetModel #out 1 -----
+        - billManagementRoutes
+            - controllers/admin/billManagementController
+                - models/billModel #out 2s -----
+                - models/meterReadingModel #out 3s -----
+                - models/customerModel #out 4s -----
+                - models/paymentModel #out 5s ----
+                - models/logModel #out 6s ----
+            - controllers/admin/meterReadingController
+                - models/meterReadingModel #out s
+                - models/billModel #out s
+                - models/logModel #out s
+        - officerRoutes
+            - controllers/admin/officerController
+                - models/admin/officerModel #in 2
+        - officerAreaRoutes
+            - controllers/admin/officerAreaController
+                - models/admin/officerAreaModel #in 3
+        - miscellaneousIncomeRoutes
+            - controllers/admin/miscellaneousIncomeController
+                - models/admin/miscellaneousIncomeModel #in 4
+        - financialRoutes
+            - controllers/admin/financialController
+                - models/admin/financialModel #in 5s
+                - models/paymentModel #out s
+        - customerRoutes
+            - controllers/admin/customerController
+                - models/admin/customerModel #in 6
+        - officerRevenueRoutes
+            - controllers/admin/officerRevenueController
+                - models/admin/officerRevenueModel #in 7
+        - transitionCustomersRoutes
+            - controllers/admin/transitionCustomersController
+                - models/admin/transitionCustomersModel #in 8
+        - dashboardRoutes
+            - controllers/dashboardController
+                - models/admin/financialModel #in s
+        - /customerRoutes
+            - controllers/customerController
+                - models/customerModel #out s
+                - models/billModel #out s
+                - models/meterReadingModel #out s
+            - controllers/admin/customerStatsController
+                - 
+
+#uout = 6  #in = 8
+
+    - petugas
+        - customerRoutes
+            - controllers/petugas/customerController
+                - models/petugas/customerModel #1s
+        - paymentRoutes
+            - controllers/petugas/paymentController
+                - models/petugas/PaymentModel #2
+                - models/petugas/billModel #3
+                - models/petugas/customerModel s
+        - meterReadingRoutes
+            - controllers/petugas/meterReadingController
+                - models/petugas/customerModel s
+                - models/petugas/meterReadingModel #4
+                - models/petugas/billModel s
+        - historyRoutes
+            - controllers/petugas/historyController
+                - models/petugas/historyModel #5
+        - dashboardRoutes
+            - controllers/petugas/dashboardController
+                - models/petugas/dashboardModel #6
+        - customerPageRoutes
+            - controllers/petugas/customerPageController
+                - models/petugas/customerPageModel #7
+        - permissionRoutes
+            - controllers/petugas/permissionController
+                - db
+        - profileRoutes
+            - controllers/petugas/profileController
+                - models/petugas/profileModel #8
+        - uploadRoutes
+            - controllers/petugas/uploadController
+                - config

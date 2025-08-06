@@ -1,0 +1,60 @@
+# Node.js
+node_modules/
+npm-debug.log
+.env
+.env.local
+.env.production
+
+# Next.js
+.next/
+out/
+
+# Logs & OS
+*.log
+.DS_Store
+
+# Uploads
+uploads/
+storage/
+pdf/
+
+# Build output
+dist/
+build/
+
+# VSCode
+.vscode/
+
+# Tambahkan baris ini di .gitignore
+# Sensitive files
+cookies.txt
+*.txt
+
+# Database
+#*.sql
+*.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db 
+
+# Development
+.env.development
+.env.test
+.env.staging
+
+# Logs
+logs/
+*.log
+
+# Sentry build plugin
+.env.sentry-build-plugin
+
