@@ -162,11 +162,16 @@ export default function PaymentForm({
     } catch { /* fallback handled if needed */ }
   };
 
-  // Tambahkan fungsi untuk kirim tagihan ke WhatsApp
-  const handleSendWhatsApp = () => {
-    if (!customer.phoneNumber) return;
+  // ✅ Fungsi untuk kirim tagihan ke WhatsApp
+const handleSendWhatsApp = () => {
+    if (!customer.phoneNumber) {
+        toast.error("Nomor telepon pelanggan tidak tersedia.");
+        return;
+    }
+
     const formattedPhone = customer.phoneNumber.replace(/^0/, '62');
-    // Ambil periode
+    
+    // --- Logika Periode (Tetap Sama) ---
     const now = new Date();
     const monthNames = [
       'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -175,23 +180,43 @@ export default function PaymentForm({
     const period = bill && bill.dueDate
       ? `${monthNames[new Date(bill.dueDate).getMonth()]} ${new Date(bill.dueDate).getFullYear()}`
       : `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
-    // Use settings for rekening and maps
-    const rekening = settings.bank_account_bca || 'Rekening belum diatur';
-    const kantorMaps = settings.Maps_url || 'https://maps.app.goo.gl/abcdefg';
+
+    // --- ✅ LOGIKA PESAN DINAMIS BARU ---
+    let paymentInstructions = '';
+    
+    // Ambil URL QRIS yang sudah bersih
+    const qrisUrl = settings.qris_image_url ? he.decode(settings.qris_image_url) : null;
+
+    if (method === 'qris' && qrisUrl) {
+        // Jika metode adalah QRIS dan URL-nya ada
+        paymentInstructions = 
+            `Pembayaran dapat dilakukan dengan memindai Kode QRIS berikut:\n` +
+            `${qrisUrl}\n\n` +
+            `Silakan unggah bukti pembayaran setelah transaksi berhasil.`;
+    } else {
+        // Fallback ke Transfer Bank jika QRIS tidak dipilih atau tidak ada
+        const rekeningBCA = settings.bank_account_bca || 'Nomor rekening belum diatur.';
+        paymentInstructions = 
+            `Pembayaran dapat dilakukan melalui transfer ke rekening berikut:\n` +
+            `BCA: ${rekeningBCA}`;
+    }
+
+    // --- Template Pesan Utama (Tetap Sama) ---
     const message =
       `PEMBERITAHUAN TAGIHAN AIR\n\n` +
       `Yth. Bpk/Ibu ${customer.name},\n\n` +
       `Berikut adalah rincian tagihan air Anda untuk periode ${period}:\n\n` +
       `ID Pelanggan: ${customer.id}\n` +
       `Jumlah Tagihan: ${formatRupiah(totalDue)}\n\n` +
-      `Pembayaran dapat dilakukan melalui transfer ke rekening berikut:\n${rekening}\n\n` +
-      `Atau langsung di kantor kami: ${kantorMaps}\n\n` +
+      `${paymentInstructions}\n\n` + // <-- Menggunakan instruksi pembayaran dinamis
       `Terima kasih atas perhatian Anda.\n\n` +
-      `Hormat kami,\nPDAM Tirta Sejahtera`;
+      `Hormat kami,\nTirta Muna`;
+
+    // --- Pengiriman Pesan (Tetap Sama) ---
     const encodedMessage = encodeURIComponent(message.replace(/\\n/g, '\n'));
     const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
-  };
+};
 
 const handleSubmit = async () => {
   setError('');
@@ -281,6 +306,15 @@ const handleSubmit = async () => {
   }
 };
 
+  useEffect(() => {
+    // Cleanup function untuk revokeObjectURL saat komponen unmount atau proofPreview berubah
+    return () => {
+      if (proofPreview) {
+        URL.revokeObjectURL(proofPreview);
+      }
+    };
+  }, [proofPreview]);
+
   return (
     <div className="space-y-6">
       {/* Modal QRIS Besar */}
@@ -292,11 +326,12 @@ const handleSubmit = async () => {
         <div className="p-4 flex flex-col items-center">
           {settings.qris_image_url && (
             <Image 
-              src={he.decode(settings.qris_image_url)} 
+              src={settings.qris_image_url} 
               alt="QRIS Code Pembayaran" 
               width={350} 
               height={350} 
               className="rounded-lg shadow-md"
+              style={{ height: 'auto', width: 'auto' }}
             />
           )}
           <p className="mt-4 text-sm text-gray-600 text-center">
@@ -317,18 +352,18 @@ const handleSubmit = async () => {
             <div className="flex items-center gap-4">
                 <div className="bg-[#e0e5ec] p-3 rounded-full shadow-neumorph flex-shrink-0">
                     <User className="w-6 h-6 text-blue-600" />
-          </div>
+                </div>
                 <div>
                     <h3 className="font-bold text-gray-800 text-base leading-tight">{customer.name}</h3>
                     <p className="text-sm text-gray-500">ID Pelanggan: {customer.id}</p>
-        </div>
-      </div>
+                </div>
+            </div>
 
             {/* Total Bill Info */}
             <div className="text-center p-4 bg-white/60 rounded-xl shadow-neumorph-inset">
                 <p className="text-sm font-medium text-gray-600">Total Tagihan Bulan Ini</p>
                 <p className="text-4xl font-extrabold text-blue-600 tracking-tight">{formatRupiah(totalDue)}</p>
-      </div>
+            </div>
 
             {/* Payment Method & Amount */}
             <div className="pt-5 border-t border-gray-300/50">
@@ -344,12 +379,12 @@ const handleSubmit = async () => {
                             <option value="transfer">Transfer Bank</option>
                             <option value="qris">QRIS</option>
                         </select>
-      </div>
+                    </div>
                     <div>
                         <label className="text-sm font-medium text-gray-600 block mb-2">Jumlah Bayar</label>
-        <div className="relative">
+                        <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">Rp</span>
-          <input
+                            <input
                                 type="text"
                                 value={formatRupiahInput(amount)}
                                 onChange={(e) => setAmount(parseRupiahInput(e.target.value))}
@@ -372,13 +407,13 @@ const handleSubmit = async () => {
                                 <p className="text-xs text-gray-500">Tersedia: {formatRupiah(customer.saldo)}</p>
                             </div>
                         </div>
-              <input
+                        <input
                             id="useBalance" type="checkbox" checked={useBalance} onChange={(e) => setUseBalance(e.target.checked)}
                             className="h-5 w-5 rounded-md text-blue-600 focus:ring-blue-500 border-gray-300 shadow-sm"
                         />
-              </label>
-            </div>
-          )}
+                    </label>
+                </div>
+            )}
 
             {/* Conditional Payment Info & Proof */}
             {(method === 'transfer' || method === 'qris') && (
@@ -410,6 +445,7 @@ const handleSubmit = async () => {
               height={150} 
               className="mx-auto rounded-lg cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setIsQrisModalOpen(true)}
+              style={{ height: 'auto', width: 'auto' }}
             />
             <p 
               className="text-xs text-blue-600 mt-2 cursor-pointer"
@@ -422,7 +458,17 @@ const handleSubmit = async () => {
                     <div>
                         <label className="text-sm font-medium text-gray-600 mb-2 flex items-center gap-1.5"><Upload size={16}/> Unggah Bukti</label>
                          {proofPreview ? (
-                            <div className="relative group w-fit"><Image src={he.decode(proofPreview)} alt="Pratinjau" width={160} height={160} className="rounded-lg max-h-40 shadow-md" /><button onClick={() => setProofPreview(null)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg"><X size={16}/></button></div>
+                            <div className="relative group w-fit">
+    <Image 
+      src={proofPreview} 
+      alt="Pratinjau" 
+      width={160} 
+      height={160} 
+      className="rounded-lg max-h-40 shadow-md" 
+      style={{ height: 'auto', width: 'auto' }}
+    />
+    <button onClick={() => setProofPreview(null)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg"><X size={16}/></button>
+  </div>
                         ) : (
                             <input
                               type="file"

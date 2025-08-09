@@ -173,7 +173,7 @@ export default function CustomerDetailHistoryPage() {
       const historyUrl = await uploadPdfToCloudinary(historyBlob, fileName, 'reports');
 
       // Kirim ke WhatsApp
-      const message = `Yth. Bpk/Ibu ${customerFinancialSummary.customerName},\n\nBerikut adalah riwayat lengkap tagihan air Anda:\n\n${historyUrl}\n\nSalam,\nPDAM Tirta Sejahtera`;
+      const message = `Yth. Bpk/Ibu ${customerFinancialSummary.customerName},\n\nBerikut adalah riwayat lengkap tagihan air Anda:\n\n${historyUrl}\n\nSalam,\nTirta Muna`;
       const encodedMessage = encodeURIComponent(message);
       const formattedPhone = customerPhone.replace(/^0/, '62');
       const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;

@@ -71,13 +71,42 @@ app.use(helmet({
 }));
 
 // ==============================
-// ✅ Rate Limiter
+// ✅ Rate Limiter dengan Peringatan Log
 // ==============================
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 600,
   message: { success: false, message: 'Terlalu banyak permintaan, coba lagi nanti.' },
+  trustProxy: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res, next, options) => {
+    logWarn('Rate limit terlampaui', {
+      ip: req.ip,
+      path: req.path,
+      limit: options.max,
+      window: `${options.windowMs / 60000} menit`
+    });
+    res.status(options.statusCode).send(options.message);
+  },
 });
+
+const checkRateLimitWarning = (req, res, next) => {
+  const remaining = res.getHeader('RateLimit-Remaining');
+  const warningThreshold = Math.floor(600 * 0.1);
+
+  if (remaining !== undefined && Number(remaining) < warningThreshold) {
+    logWarn('Rate limit hampir habis', {
+      ip: req.ip,
+      path: req.path,
+      remaining: Number(remaining),
+      limit: 600
+    });
+  }
+
+  next();
+};
+
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
@@ -92,8 +121,8 @@ app.use(requestLogger);
 // ==============================
 // ✅ Routes
 // ==============================
-app.use('/api', apiLimiter);
 app.use('/api/auth', loginLimiter);
+app.use('/api', apiLimiter, checkRateLimitWarning);
 app.use('/api', routes);
 
 // ==============================

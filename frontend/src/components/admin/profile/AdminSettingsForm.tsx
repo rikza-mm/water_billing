@@ -6,7 +6,6 @@ import { Loader, Save, Settings, X, UploadCloud } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
-import he from 'he';
 
 // Asumsikan Anda memiliki file ini dari langkah sebelumnya
 import { uploadImageToCloudinary } from '@/utils/directUploader';
@@ -60,10 +59,9 @@ export function AdminSettingsModal({ isOpen, onClose }: AdminSettingsModalProps)
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateSettings(localSettings);
-    // onClose(); // Biarkan modal terbuka agar user bisa melihat hasilnya
   };
 
   if (!isOpen || typeof window === 'undefined') return null;
@@ -107,7 +105,7 @@ export function AdminSettingsModal({ isOpen, onClose }: AdminSettingsModalProps)
             {localSettings.qris_image_url && (
                 <div className="my-2">
                     <p className="text-xs mb-1">Gambar saat ini:</p>
-                    <Image src={he.decode(localSettings.qris_image_url)} alt="QRIS Preview" width={128} height={128} className="object-contain border rounded bg-white p-1" />
+                    <Image src={localSettings.qris_image_url || '/placeholder.png'} alt="QRIS Preview" width={128} height={128} className="object-contain border rounded bg-white p-1" />
                 </div>
             )}
             <div className="flex items-center gap-2">

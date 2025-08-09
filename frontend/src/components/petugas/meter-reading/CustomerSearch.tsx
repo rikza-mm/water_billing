@@ -55,7 +55,7 @@ export default function CustomerSearch({
       alert('Nomor telepon pelanggan tidak tersedia.');
       return;
     }
-    const officerName = "Petugas Lapangan PDAM";
+    const officerName = "Tirta Muna";
     const messageLines = [
       `*PEMBERITAHUAN KUNJUNGAN*`,
       `-----------------------------------`,
@@ -64,7 +64,7 @@ export default function CustomerSearch({
       ``,
       `Kami informasikan bahwa petugas kami telah datang ke alamat Anda untuk melakukan pencatatan meter air.`,
       ``,
-      `Namun, kami tidak dapat mengakses meteran karena rumah dalam keadaan kosong/terkunci.`,
+      `Namun, kami tidak dapat mengakses meteran karena rumah dalam keadaan kosong.`,
       ``,
       `Untuk pembuatan tagihan periode ini, mohon bantuannya untuk mengirimkan *foto angka yang tertera di meteran air* Anda ke nomor ini.`,
       ``,

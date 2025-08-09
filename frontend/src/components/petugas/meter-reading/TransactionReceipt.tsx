@@ -144,11 +144,11 @@ export default function TransactionReceipt({ customer, meterReading, payment, on
         const historyFileName = `riwayat-${customer.id}-${Date.now()}.pdf`;
         historyUrl = await uploadPdfToCloudinary(historyBlob, historyFileName, 'reports');
       }
-      let message = `Yth. Bpk/Ibu ${customer.name},\n\nTerima kasih atas pembayaran tagihan air Anda.\n\n🧾 Bukti Pembayaran:\n${receiptUrl}`;
+      let message = `Yth. Bpk/Ibu ${customer.name},\n\nTerima kasih atas pembayaran tagihan air Anda.\n\nBukti Pembayaran:\n${receiptUrl}`;
       if (historyUrl) {
-        message += `\n\n📊 Riwayat Lengkap Pelanggan:\n${historyUrl}`;
+        message += `\n\nRiwayat Lengkap Pelanggan:\n${historyUrl}`;
       }
-      message += `\n\nSalam,\nPDAM Tirta Sejahtera`;
+      message += `\n\nSalam,\nTirta Muna`;
       const encodedMessage = encodeURIComponent(message);
       const formattedPhone = customerPhone.replace(/^0/, '62');
       const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
@@ -231,9 +231,10 @@ export default function TransactionReceipt({ customer, meterReading, payment, on
               <Image
               src={payment.proofImage}
               alt="Bukti Pembayaran"
-              width={150} // Biarkan Next.js menggunakan ini
-              height={200} // Biarkan Next.js menggunakan ini
-              className="rounded-md object-contain" // className ini sudah cukup
+              width={150}
+              height={200}
+              className="rounded-md object-contain"
+              style={{ height: 'auto', width: 'auto' }} // <-- Tambahkan style agar rasio aspek otomatis
             />
               </div>
             </div>

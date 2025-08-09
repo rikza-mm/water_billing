@@ -184,6 +184,8 @@ export default function Sidebar({ user, isCollapsed, onToggle }: Props) {
               width={isCollapsed ? 40 : 90}
               height={isCollapsed ? 40 : 90}
               className="rounded-full"
+              priority
+              style={{ height: 'auto', width: 'auto' }}
             />
           </div>
           {!isCollapsed && (

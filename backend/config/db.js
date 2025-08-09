@@ -12,12 +12,7 @@ const pool = mysql.createPool({
   multipleStatements: true 
 });
 
-// Test koneksi
-pool.getConnection((err, connection) => {
-  if (err) {
-    return;
-  }
-  connection.release();
-});
+// Tidak perlu tes koneksi di sini.
+// Biarkan pool menangani koneksi saat query pertama datang.
 
 module.exports = pool.promise();
