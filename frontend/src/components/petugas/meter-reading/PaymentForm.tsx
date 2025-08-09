@@ -439,14 +439,14 @@ const handleSubmit = async () => {
                         <div className="p-3 bg-white/60 rounded-xl shadow-neumorph-inset text-center">
                             <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center justify-center gap-2"><QrCode size={16} /> Pindai Kode QRIS</h4>
                             <Image 
-              src={he.decode(settings.qris_image_url)} 
-              alt="QRIS Code" 
-              width={150} 
-              height={150} 
-              className="mx-auto rounded-lg cursor-pointer hover:scale-105 transition-transform"
-              onClick={() => setIsQrisModalOpen(true)}
-              style={{ height: 'auto', width: 'auto' }}
-            />
+                              src={he.decode(settings.qris_image_url)} 
+                              alt="QRIS Code" 
+                              width={150} 
+                              height={150} 
+                              className="mx-auto rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                              onClick={() => setIsQrisModalOpen(true)}
+                              style={{ height: 'auto', width: 'auto' }}
+                            />
             <p 
               className="text-xs text-blue-600 mt-2 cursor-pointer"
               onClick={() => setIsQrisModalOpen(true)}
@@ -459,16 +459,21 @@ const handleSubmit = async () => {
                         <label className="text-sm font-medium text-gray-600 mb-2 flex items-center gap-1.5"><Upload size={16}/> Unggah Bukti</label>
                          {proofPreview ? (
                             <div className="relative group w-fit">
-    <Image 
-      src={proofPreview} 
-      alt="Pratinjau" 
-      width={160} 
-      height={160} 
-      className="rounded-lg max-h-40 shadow-md" 
-      style={{ height: 'auto', width: 'auto' }}
-    />
-    <button onClick={() => setProofPreview(null)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg"><X size={16}/></button>
-  </div>
+                              <Image
+                                src={proofPreview}
+                                alt="Pratinjau"
+                                width={160}
+                                height={160}
+                                className="rounded-lg shadow-md"
+                                style={{ width: '160px', height: '160px' }}
+                              />
+                              <button 
+                                onClick={() => setProofPreview(null)} 
+                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg"
+                              >
+                                <X size={16}/>
+                              </button>
+                            </div>
                         ) : (
                             <input
                               type="file"
