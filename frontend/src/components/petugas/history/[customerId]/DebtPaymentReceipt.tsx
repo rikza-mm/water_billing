@@ -67,7 +67,7 @@ export default function DebtPaymentReceipt({ customer, payment, onFinish }: Debt
       toast.error('Harap tunggu hingga URL struk selesai dimuat.');
       return;
     }
-    const message = `Yth. Bpk/Ibu ${customer.name},\n\nBerikut adalah bukti pembayaran hutang air Anda:\n${receiptUrl}\n\nTerima kasih.\nPDAM Tirta Sejahtera`;
+    const message = `Yth. Bpk/Ibu ${customer.name},\n\nBerikut adalah bukti pembayaran hutang air Anda:\n${receiptUrl}\n\nTerima kasih.\n\nSalam,\nTirta Muna`;
     const encodedMessage = encodeURIComponent(message);
     const formattedPhone = customer.phone.replace(/^0/, '62');
     const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
