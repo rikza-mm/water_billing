@@ -62,14 +62,11 @@ export function TransitionCustomerModal({
     e.preventDefault();
     setError(null);
 
-    // Debug: log formData
-
-    // Validasi: cek semua field kecuali notes
+    // Validasi: cek field wajib (telepon TIDAK wajib)
     const requiredFields = [
       'full_name',
       'area_id',
       'category_id',
-      'phone_number',
       'address',
       'meter_number',
       'registration_date',
@@ -81,7 +78,15 @@ export function TransitionCustomerModal({
     for (const key of requiredFields) {
       const value = formData[key as keyof typeof formData];
       if (typeof value === 'undefined' || value === null || value.toString().trim().length === 0) {
-        setError('Semua field wajib diisi, kecuali catatan.');
+        setError('Field bertanda * wajib diisi. Nomor telepon bersifat opsional.');
+        return;
+      }
+    }
+    // Validasi telepon opsional: hanya cek jika diisi
+    if (formData.phone_number && formData.phone_number.trim().length > 0) {
+      const digits = formData.phone_number.replace(/\D/g, '');
+      if (digits.length < 10) {
+        setError('Nomor telepon minimal 10 digit atau kosongkan jika tidak ada.');
         return;
       }
     }
@@ -225,11 +230,10 @@ export function TransitionCustomerModal({
             <div>
               <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <Phone size={16} className="text-teal-600" />
-                Nomor Telepon <span className="text-red-500">*</span>
+                Nomor Telepon <span className="text-gray-500">(opsional)</span>
               </label>
               <input
                 type="text"
-                required
                 value={formData.phone_number}
                 onChange={e => setFormData({ ...formData, phone_number: e.target.value })}
                 className="w-full p-3 rounded-xl bg-[#d1d5dc] text-gray-800 placeholder-gray-500 shadow-[inset_2px_2px_5px_#bebebe,inset_-2px_-2px_5px_#ffffff] outline-none"

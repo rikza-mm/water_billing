@@ -23,7 +23,7 @@ export function useTransitionCustomer() {
       fullName: data.full_name,
       areaId: Number(data.area_id),
       categoryId: Number(data.category_id),
-      phoneNumber: data.phone_number,
+      phoneNumber: data.phone_number?.trim() || null,
       address: data.address,
       registrationDate: data.registration_date,
       meterNumber: data.meter_number,
