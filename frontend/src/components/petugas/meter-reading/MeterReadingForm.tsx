@@ -138,9 +138,8 @@ export default function MeterReadingForm({ customer, onSubmit, onBack, isLoading
     try {
       const compressedFile = await imageCompression(file, options);
       const url = await uploadImageToCloudinary(compressedFile, 'meter_proofs');
-      setPhotoUrl(url);
-      if (photoPreview) URL.revokeObjectURL(photoPreview);
-      setPhotoPreview(URL.createObjectURL(compressedFile));
+      setPhotoUrl(url); // Simpan URL Cloudinary untuk disubmit
+      setPhotoPreview(url); // Gunakan URL Cloudinary untuk pratinjau
       toast.success('Foto meter berhasil diunggah!');
     } catch {
       toast.error('Gagal memproses gambar');

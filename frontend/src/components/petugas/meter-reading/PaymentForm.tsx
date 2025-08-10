@@ -87,8 +87,8 @@ export default function PaymentForm({
   const [error, setError] = useState('');
 
   // ✅ State baru untuk file bukti pembayaran
-  const [proofImage, setProofImage] = useState<File | null>(null);
-  const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [uploadedProofUrl, setUploadedProofUrl] = useState<string | null>(null); // State baru untuk URL Cloudinary
+  const [proofPreview, setProofPreview] = useState<string | null>(null); // Pratinjau gambar
   
   // ✅ State untuk feedback copy to clipboard
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
@@ -145,9 +145,9 @@ export default function PaymentForm({
     };
     try {
       const compressedFile = await imageCompression(file, options);
-      setProofImage(compressedFile);
-      if (proofPreview) URL.revokeObjectURL(proofPreview);
-      setProofPreview(URL.createObjectURL(compressedFile));
+      const url = await uploadImageToCloudinary(compressedFile, 'payment_proofs');
+      setUploadedProofUrl(url); // Simpan URL Cloudinary untuk submit
+      setProofPreview(url); // Gunakan URL Cloudinary untuk pratinjau
     } catch {
       setError('Gagal memproses gambar bukti pembayaran');
     }
@@ -220,16 +220,12 @@ const handleSendWhatsApp = () => {
 
 const handleSubmit = async () => {
   setError('');
-  if ((method === 'transfer' || method === 'qris') && !proofImage) {
+  if ((method === 'transfer' || method === 'qris') && !uploadedProofUrl) {
     return setError("Bukti pembayaran wajib dilampirkan.");
   }
-  let uploadedImageUrl: string | undefined;
+  const uploadedImageUrl: string | undefined = uploadedProofUrl || undefined;
   try {
     setLoading(true);
-    // LANGKAH 1: Unggah bukti pembayaran jika ada
-    if (proofImage) {
-      uploadedImageUrl = await uploadImageToCloudinary(proofImage, 'payment_proofs');
-    }
     // LANGKAH 2: Proses pembayaran ke backend
     toast.loading('Memproses pembayaran...');
     const paymentPayload = {
@@ -305,15 +301,6 @@ const handleSubmit = async () => {
     setIsArchiving(false);
   }
 };
-
-  useEffect(() => {
-    // Cleanup function untuk revokeObjectURL saat komponen unmount atau proofPreview berubah
-    return () => {
-      if (proofPreview) {
-        URL.revokeObjectURL(proofPreview);
-      }
-    };
-  }, [proofPreview]);
 
   return (
     <div className="space-y-6">

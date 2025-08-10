@@ -40,6 +40,12 @@ app.use(express.urlencoded({ extended: true }));
 // ✅ Helmet - Secure HTTP headers
 // ==============================
 app.use(helmet({
+  // Menonaktifkan header yang sudah di-handle oleh Nginx
+  hsts: false,
+  xContentTypeOptions: false,
+  xFrameOptions: false,
+
+  // Konfigurasi CSP dan lainnya tetap dipertahankan
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
