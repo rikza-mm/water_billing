@@ -198,7 +198,7 @@ export const generateDebtReceiptPdf = (
   // --- HEADER ---
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
-  doc.text('PDAM TIRTA SEJAHTERA', 40, finalY, { align: 'center' });
+  doc.text('ARTESIS TIRTA MUNA', 40, finalY, { align: 'center' });
   finalY += 5;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);

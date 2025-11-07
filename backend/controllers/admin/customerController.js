@@ -63,94 +63,41 @@ exports.getCustomerDetails = async (req, res) => {
  * [DIPERBAIKI] Mengedit data pelanggan dengan validasi dan dukungan kategori.
  */
 exports.updateCustomer = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-    }
-
     try {
-        const customerId = req.params.id;
-        const body = req.body;
+        const customerId = parseInt(req.params.id, 10);
+        const dataToUpdate = req.body; // Data yang sudah divalidasi oleh router
 
-        // 1. Keamanan: Definisikan kolom apa saja yang boleh diubah oleh admin
-        const allowedUpdates = [
-            'full_name', 
-            'phone_number', 
-            'whatsapp_number', 
-            'address', 
-            'area_id', 
-            'category_id', 
-            'meter_number'
-        ];
-        
-        const dataToUpdate = {};
-        // Filter body request, hanya ambil data yang diizinkan
-        Object.keys(body).forEach(key => {
-            if (allowedUpdates.includes(key) && body[key] !== null && body[key] !== undefined) {
-                dataToUpdate[key] = body[key];
-            }
-        });
-
-        // 2. Validasi: Pastikan ada data yang valid untuk diperbarui
+        // Validasi dasar: pastikan ada data yang dikirim
         if (Object.keys(dataToUpdate).length === 0) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Tidak ada data valid yang dikirim untuk diperbarui.' 
-            });
+            return res.status(400).json({ success: false, message: 'Tidak ada data valid untuk diperbarui.' });
         }
 
-        // 3. Validasi tambahan untuk category_id jika ada
-        if (dataToUpdate.category_id) {
-            const categoryExists = await adminCustomerModel.validateCategory(dataToUpdate.category_id);
-            if (!categoryExists) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'Kategori yang dipilih tidak valid atau tidak ditemukan.' 
-                });
-            }
+        // (Opsional tapi direkomendasikan) Validasi Foreign Key jika ada di payload
+        if (dataToUpdate.area_id && !(await adminCustomerModel.validateArea(dataToUpdate.area_id))) {
+            return res.status(400).json({ success: false, message: 'Area yang dipilih tidak valid.' });
         }
-
-        // 4. Validasi tambahan untuk area_id jika ada
-        if (dataToUpdate.area_id) {
-            const areaExists = await adminCustomerModel.validateArea(dataToUpdate.area_id);
-            if (!areaExists) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'Area yang dipilih tidak valid atau tidak ditemukan.' 
-                });
-            }
+        if (dataToUpdate.category_id && !(await adminCustomerModel.validateCategory(dataToUpdate.category_id))) {
+            return res.status(400).json({ success: false, message: 'Kategori yang dipilih tidak valid.' });
         }
 
         const updateResult = await adminCustomerModel.update(customerId, dataToUpdate);
 
+        // Perbaiki logika: Cek 'affectedRows' untuk memastikan customer ada
         if (updateResult.affectedRows === 0) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Pelanggan tidak ditemukan, pembaruan gagal.' 
-            });
+            return res.status(404).json({ success: false, message: 'Pelanggan tidak ditemukan atau tidak ada data yang berubah.' });
         }
 
-        // 5. Respons Informatif: Ambil data terbaru setelah di-update
-        const updatedCustomer = await adminCustomerModel.getDetailsById(customerId);
-
+        // Langsung kembalikan data yang berhasil di-update + ID-nya
         res.status(200).json({
             success: true,
             message: 'Data pelanggan berhasil diperbarui.',
-            data: updatedCustomer
+            data: { id: customerId, ...dataToUpdate }
         });
 
     } catch (error) {
-        if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Update gagal: ID Area atau ID Kategori yang dimasukkan tidak valid.' 
-            });
-        }
-        res.status(500).json({ 
-            success: false, 
-            message: 'Internal server error', 
-            error: error.message 
-        });
+        // Log error asli untuk debugging
+        console.error("Update customer error:", error);
+        res.status(500).json({ success: false, message: 'Terjadi kesalahan internal pada server.' });
     }
 };
 

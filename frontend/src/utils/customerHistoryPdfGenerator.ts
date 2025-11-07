@@ -27,10 +27,10 @@ export const generateCustomerHistoryPdf = (
   // Header
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
-  doc.text('RIWAYAT PELANGGAN PDAM', 105, finalY, { align: 'center' });
+  doc.text('RIWAYAT PELANGGAN ARTESIS', 105, finalY, { align: 'center' });
   finalY += 8;
   doc.setFontSize(12);
-  doc.text('TIRTA SEJAHTERA', 105, finalY, { align: 'center' });
+  doc.text('TIRTA MUNA', 105, finalY, { align: 'center' });
   finalY += 15;
 
   // Info Pelanggan
@@ -171,7 +171,7 @@ export const generateCustomerHistoryPdf = (
   finalY = getLastAutoTableFinalY(doc) + 10;
   doc.setFontSize(8);
   doc.setFont('helvetica', 'italic');
-  doc.text('Dokumen ini dibuat otomatis oleh sistem PDAM Tirta Sejahtera', 105, finalY, { align: 'center' });
+  doc.text('Dokumen ini dibuat otomatis oleh sistem Artesis Tirta Muna', 105, finalY, { align: 'center' });
   finalY += 4;
   doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`, 105, finalY, { align: 'center' });
 
@@ -245,7 +245,7 @@ export function generateDebtPaymentReceiptPdf(
         <span class="label">Sisa Hutang:</span> <span class="value">Rp ${Number(payment.newDebt ?? 0).toLocaleString('id-ID')}</span><br/>
         <span class="label">Saldo Terakhir:</span> <span class="value">Rp ${Number(payment.newBalance ?? 0).toLocaleString('id-ID')}</span><br/>
       </div>
-      <div class="section" style="margin-top:32px; color:#888; font-size:13px;">Terima kasih atas pembayaran Anda.<br/>PDAM Tirta Sejahtera</div>
+      <div class="section" style="margin-top:32px; color:#888; font-size:13px;">Terima kasih atas pembayaran Anda.<br/>Artesis Tirta Muna</div>
       </body></html>
     `);
     win.document.close();
@@ -284,7 +284,7 @@ export function generateDebtPaymentReceiptPdf(
         <span class="label">Sisa Hutang:</span> <span class="value">Rp ${Number(payment.newDebt ?? 0).toLocaleString('id-ID')}</span><br/>
         <span class="label">Saldo Terakhir:</span> <span class="value">Rp ${Number(payment.newBalance ?? 0).toLocaleString('id-ID')}</span><br/>
       </div>
-      <div class="section" style="margin-top:32px; color:#888; font-size:13px;">Terima kasih atas pembayaran Anda.<br/>PDAM Tirta Sejahtera</div>
+      <div class="section" style="margin-top:32px; color:#888; font-size:13px;">Terima kasih atas pembayaran Anda.<br/>Artesis Tirta Muna</div>
       </body></html>
     `;
     return new Blob([html], { type: 'application/pdf' });

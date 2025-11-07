@@ -9,11 +9,11 @@ exports.recordAndBill = async (req, res) => {
     // Ambil imageUrl langsung dari body, bukan dari req.file
     const { customerId, currentReading, readingDate, notes, imageUrl } = req.body;
 
-    // Validasi data, sekarang termasuk imageUrl
-    if (!customerId || !currentReading || !readingDate || !imageUrl) {
+    // Validasi data, sekarang TIDAK mewajibkan imageUrl
+    if (!customerId || !currentReading || !readingDate) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Data tidak lengkap. URL gambar wajib disertakan.' 
+        message: 'Data tidak lengkap. customerId, currentReading, dan readingDate wajib diisi.' 
       });
     }
 
@@ -24,7 +24,7 @@ exports.recordAndBill = async (req, res) => {
         current_reading: parseFloat(currentReading),
         reading_date: readingDate,
         notes: notes || null,
-        image_url: imageUrl, // <-- Kirim URL yang diterima dari frontend
+        image_url: imageUrl || null, // Boleh null
     };
 
     // Panggil metode model yang memanggil Stored Procedure

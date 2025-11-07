@@ -95,7 +95,7 @@ export const generateReceiptPDF = async (
 
     // Header
     addText('STRUK PEMBAYARAN AIR', 10, 'center');
-    addText('PDAM TIRTA SEJAHTERA', 9, 'center');
+    addText('ARTESIS TIRTA MUNA', 9, 'center');
     addSeparator();
 
     // Transaction info
@@ -221,7 +221,7 @@ export const generateTextReceipt = (
 ): void => {
   const receiptContent = `
 STRUK PEMBAYARAN AIR
-PDAM TIRTA SEJAHTERA
+ARTESIS TIRTA MUNA
 ========================
 
 Tanggal: ${new Date(payment.timestamp).toLocaleDateString('id-ID', {
@@ -301,7 +301,7 @@ export const printReceipt = (
     <div style="width: 80mm; font-family: monospace; font-size: 12px; line-height: 1.2;">
       <div style="text-align: center; font-weight: bold; margin-bottom: 10px;">
         <div style="font-size: 14px;">STRUK PEMBAYARAN AIR</div>
-        <div>PDAM TIRTA SEJAHTERA</div>
+        <div>Artesis Tirta Muna</div>
         <div style="border-top: 1px dashed #000; margin: 5px 0;"></div>
       </div>
 

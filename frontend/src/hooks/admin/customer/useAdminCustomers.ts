@@ -295,6 +295,21 @@ export function useAdminCustomers() {
     }
   };
 
+  // Fungsi baru untuk update state lokal customer
+  const updateCustomerInState = (updatedCustomer: Partial<Customer>) => {
+    setData(prevData => {
+      if (!prevData.customers) return prevData;
+      const newCustomers = prevData.customers.map(customer => {
+        if (customer.id === updatedCustomer.id) {
+          // Gabungkan data lama dengan data baru
+          return { ...customer, ...updatedCustomer };
+        }
+        return customer;
+      });
+      return { ...prevData, customers: newCustomers };
+    });
+  };
+
   // ✅ REFRESH DATA
   const refreshData = () => {
     debouncedFetchData(filters);
@@ -317,5 +332,6 @@ export function useAdminCustomers() {
     updateCustomerStatus,
     createCustomer,
     refreshData,
+    updateCustomerInState, // Ekspor fungsi baru
   };
 }

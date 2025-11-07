@@ -32,7 +32,8 @@ export default function CustomerManagementPage() {
     goToPage,
     createCustomer,
     refreshData,
-    updateCustomerStatus
+    updateCustomerStatus,
+    updateCustomerInState // Ambil dari hook
   } = useAdminCustomers();
 
   const { migrateCustomer } = useTransitionCustomer();
@@ -59,35 +60,24 @@ export default function CustomerManagementPage() {
     }
   };
 
-  const handleEditClick = async (customer: Customer) => {
-    setDetailLoading(true);
+  const handleEditClick = (customer: Customer) => {
+    setEditCustomer(customer); // Langsung gunakan data dari tabel
     setEditOpen(true);
-    try {
-      const detail = await fetchCustomerDetail(customer.id);
-      setEditCustomer(detail.profile);
-    } catch {
-      toast.error('Gagal mengambil data untuk diedit.');
-      setEditOpen(false);
-    } finally {
-      setDetailLoading(false);
-    }
   };
 
   const handleUpdateSubmit = async (id: number, data: CustomerUpdateData) => {
     const toastId = toast.loading('Memperbarui data...');
     try {
-      const payload: CustomerUpdateData = {
-        full_name: data.full_name,
-        phone_number: data.phone_number,
-        address: data.address,
-        category_id: data.category_id,
-        area_id: data.area_id,
-        meter_number: data.meter_number,
-      };
-      await updateCustomer(id, payload);
+      const response = await updateCustomer(id, data);
+      // amankan berbagai bentuk return
+      const updated = response?.data || response?.customer || response;
+      if (updated) {
+        updateCustomerInState(updated);
+      } else {
+        refreshData();
+      }
       toast.success('Data pelanggan berhasil diperbarui.', { id: toastId });
       setEditOpen(false);
-      refreshData();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Gagal memperbarui data.', { id: toastId });
     }

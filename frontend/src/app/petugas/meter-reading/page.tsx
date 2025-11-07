@@ -200,20 +200,19 @@ export default function MeterReadingPage() {
     notes?: string;
     photoUrl?: string;
   }) => {
-    if (!customer || !readingDataFromForm.photoUrl) {
-      showToast('error', 'Data pelanggan atau foto meter tidak lengkap.');
+    if (!customer) {
+      showToast('error', 'Data pelanggan tidak lengkap.');
       return;
     }
+    // Tidak perlu validasi photoUrl di sini, karena foto opsional
     try {
       setIsUploading(true);
-      // Foto sudah diunggah di komponen, tidak perlu upload ulang
-      // Lanjutkan proses pencatatan dan pembuatan tagihan
       const recordPayload: RecordAndBillRequest = {
         customerId: Number(customer.id),
         currentReading: readingDataFromForm.currentReading,
         readingDate: readingDataFromForm.readingDate,
         notes: readingDataFromForm.notes,
-        imageUrl: readingDataFromForm.photoUrl,
+        imageUrl: readingDataFromForm.photoUrl || '', // pastikan string kosong jika undefined/null
       };
       const result = await recordAndCreateBill(recordPayload);
       if (result.success) {
@@ -225,7 +224,7 @@ export default function MeterReadingPage() {
           billAmount: result.billAmount ?? 0,
           readingDate: readingDataFromForm.readingDate,
           notes: readingDataFromForm.notes,
-          photos: [readingDataFromForm.photoUrl],
+          photos: readingDataFromForm.photoUrl ? [readingDataFromForm.photoUrl] : [],
           readingId: result.readingId?.toString(),
           billId: result.billId?.toString(),
         });

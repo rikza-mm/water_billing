@@ -164,12 +164,9 @@ export default function MeterReadingForm({ customer, onSubmit, onBack, isLoading
         return;
       }
     }
-    if (!photoUrl) {
-      setFormError('Foto meter wajib diunggah');
-      return;
-    }
+    // Foto meter TIDAK wajib
     setFormError(null);
-    onSubmit({ currentReading: currentReadingNum, readingDate, notes, photoUrl });
+    onSubmit({ currentReading: currentReadingNum, readingDate, notes, photoUrl: photoUrl || undefined });
   };
 
   // Clear error on input change
@@ -257,7 +254,7 @@ export default function MeterReadingForm({ customer, onSubmit, onBack, isLoading
               className="w-full flex justify-between items-center p-3 rounded-xl bg-[#e0e5ec] shadow-neumorph hover:shadow-neumorph-pressed transition-all"
             >
               <span className="font-semibold text-gray-700 flex items-center gap-2">
-                <Camera size={16}/> Foto Meter (Wajib)
+                <Camera size={16}/> Foto Meter (Opsional)
               </span>
               <div className="flex items-center gap-2">
                 {photoUrl && <Check size={18} className="text-green-500" />}
@@ -299,14 +296,17 @@ export default function MeterReadingForm({ customer, onSubmit, onBack, isLoading
                         </button>
                       </div>
                     ) : (
-                      <input
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        onChange={handlePhotoInputChange}
-                        disabled={isPhotoUploading || isLoading}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                      />
+                      <>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          onChange={handlePhotoInputChange}
+                          disabled={isPhotoUploading || isLoading}
+                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                        <div className="text-xs text-gray-500 mt-2">Pilih foto dari kamera atau file di perangkat Anda.</div>
+                      </>
                     )}
                     {/* Indikator loading baru yang lebih halus */}
                     {isPhotoUploading && !photoPreview && (
