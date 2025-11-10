@@ -192,14 +192,42 @@ export default function MeterReadingForm({ customer, onSubmit, onBack, isLoading
     <div className="relative space-y-6">
       <div className="p-4 sm:p-5 rounded-2xl bg-[#e0e5ec] shadow-[inset_5px_5px_10px_#bebebe,inset_-5px_-5px_10px_#ffffff] space-y-5">
         
-        {/* Customer Info Header */}
-        <div className="flex items-center gap-4">
-          <div className="bg-[#e0e5ec] p-3 rounded-full shadow-neumorph flex-shrink-0">
-            <User className="w-6 h-6 text-blue-600" />
+        {/* Customer Info Header + Minimalist Financial Summary */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-4">
+            <div className="bg-[#e0e5ec] p-3 rounded-full shadow-neumorph flex-shrink-0">
+              <User className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-800 text-base leading-tight">{customer.name}</h3>
+              <p className="text-sm text-gray-500">ID: {customer.id}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-bold text-gray-800 text-base leading-tight">{customer.name}</h3>
-            <p className="text-sm text-gray-500">ID: {customer.id}</p>
+          <div className="flex gap-2 mt-3 w-full">
+            <div className="flex-1 px-3 py-2 rounded-xl bg-[#e0e5ec] shadow-[inset_4px_4px_8px_#bebebe,inset_-4px_-4px_8px_#ffffff] text-xs flex flex-col items-center justify-center">
+              <span className="text-gray-500">Saldo</span>
+              <span className="font-semibold text-green-700">{formatRupiah(Number(customer.saldo ?? 0))}</span>
+            </div>
+            <div className="flex-1 px-3 py-2 rounded-xl bg-[#e0e5ec] shadow-[inset_4px_4px_8px_#bebebe,inset_-4px_-4px_8px_#ffffff] text-xs flex flex-col items-center justify-center">
+              <span className="text-gray-500">Hutang</span>
+              <span className="font-semibold text-red-600">{formatRupiah(Number(customer.hutang ?? 0))}</span>
+            </div>
+          </div>
+          {/* Action Buttons - mobile first, full width, below financial info */}
+          <div className="flex gap-2 mt-2 w-full">
+            <button
+              type="button"
+              className="flex-1 py-2 rounded-xl bg-[#e0e5ec] shadow-neumorph text-blue-700 text-xs font-semibold transition-all hover:shadow-neumorph-pressed border border-blue-200"
+              onClick={() => window.location.href = `/petugas/history/${customer.id}`}>
+              Riwayat
+            </button>
+            <button
+              type="button"
+              className="flex-1 py-2 rounded-xl bg-[#e0e5ec] shadow-neumorph text-red-600 text-xs font-semibold transition-all hover:shadow-neumorph-pressed border border-red-200 disabled:opacity-50"
+              disabled={!(Number(customer.hutang) > 0)}
+              onClick={() => window.location.href = `/petugas/history/${customer.id}/pay-debt`}>
+              Bayar Hutang
+            </button>
           </div>
         </div>
 
